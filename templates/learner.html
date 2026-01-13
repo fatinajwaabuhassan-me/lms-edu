@@ -1,7 +1,21 @@
-<h2>Learner Dashboard</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Learner Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f9fafb; }
+        .container { width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Learner Dashboard</h2>
 
-<ul>
-{% for course in courses %}
-    <li>{{ course.title }}</li>
-{% endfor %}
-</ul>
+    <ul>
+    {% for course in courses %}
+        <li>{{ course }}</li>
+    {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

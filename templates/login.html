@@ -1,9 +1,25 @@
-<h2>Login</h2>
-<form method="post">
-    <input name="username" placeholder="Username" required>
-    <select name="role">
-        <option value="educator">Educator</option>
-        <option value="learner">Learner</option>
-    </select>
-    <button type="submit">Login</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f8; }
+        .box { width: 300px; margin: 100px auto; padding: 20px; background: white; border-radius: 8px; }
+        input, select, button { width: 100%; padding: 8px; margin: 8px 0; }
+        button { background: #0078d4; color: white; border: none; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Login</h2>
+    <form method="post">
+        <input name="username" placeholder="Username" required>
+        <select name="role">
+            <option value="educator">Educator</option>
+            <option value="learner">Learner</option>
+        </select>
+        <button type="submit">Login</button>
+    </form>
+</div>
+</body>
+</html>

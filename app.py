@@ -3,22 +3,17 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = "secretkey"
 
-# TEMP in-memory data (for deployment stability)
+# In-memory course storage
 courses = []
 
-# -------------------------
-# LOGIN PAGE
-# -------------------------
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
-        role = request.form["role"]
+        session["username"] = request.form["username"]
+        session["role"] = request.form["role"]
 
-        session["username"] = username
-        session["role"] = role
-
-        if role == "educator":
+        if session["role"] == "educator":
             return redirect("/educator")
         else:
             return redirect("/learner")
@@ -26,9 +21,7 @@ def login():
     return render_template("login.html")
 
 
-# -------------------------
-# EDUCATOR PAGE
-# -------------------------
+# ---------------- EDUCATOR ----------------
 @app.route("/educator")
 def educator():
     if session.get("role") != "educator":
@@ -36,35 +29,30 @@ def educator():
     return render_template("educator.html", courses=courses)
 
 
-# -------------------------
-# ADD COURSE
-# -------------------------
+# ---------------- ADD COURSE ----------------
 @app.route("/add_course", methods=["POST"])
 def add_course():
-    if session.get("role") != "educator":
-        return redirect("/")
-
     title = request.form["title"]
     courses.append(title)
     return redirect("/educator")
 
 
-# -------------------------
-# DELETE COURSE
-# -------------------------
-@app.route("/delete_course/<int:index>")
-def delete_course(index):
-    if session.get("role") != "educator":
-        return redirect("/")
-
-    if index < len(courses):
-        courses.pop(index)
+# ---------------- UPDATE COURSE ----------------
+@app.route("/update_course/<int:index>", methods=["POST"])
+def update_course(index):
+    new_title = request.form["new_title"]
+    courses[index] = new_title
     return redirect("/educator")
 
 
-# -------------------------
-# LEARNER PAGE
-# -------------------------
+# ---------------- DELETE COURSE ----------------
+@app.route("/delete_course/<int:index>")
+def delete_course(index):
+    courses.pop(index)
+    return redirect("/educator")
+
+
+# ---------------- LEARNER ----------------
 @app.route("/learner")
 def learner():
     if session.get("role") != "learner":
