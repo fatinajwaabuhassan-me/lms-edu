@@ -58,3 +58,6 @@ def learner():
     if session.get("role") != "learner":
         return redirect("/")
     return render_template("learner.html", courses=courses)
+
+if __name__ == "__main__":
+    app.run(debug=True) 
