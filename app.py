@@ -1,19 +1,14 @@
 from flask import Flask, render_template, request, redirect, session
-import pyodbc
 
 app = Flask(__name__)
 app.secret_key = "secretkey"
 
-# Azure SQL connection
-conn = pyodbc.connect(
-    "DRIVER={ODBC Driver 18 for SQL Server};"
-    "SERVER=your-server-name.database.windows.net;"
-    "DATABASE=lmsdb;"
-    "UID=adminuser;"
-    "PWD=YourPassword;"
-    "Encrypt=yes;"
-)
+# TEMP in-memory data (for deployment stability)
+courses = []
 
+# -------------------------
+# LOGIN PAGE
+# -------------------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -30,27 +25,48 @@ def login():
 
     return render_template("login.html")
 
+
+# -------------------------
+# EDUCATOR PAGE
+# -------------------------
 @app.route("/educator")
 def educator():
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM courses")
-    courses = cursor.fetchall()
+    if session.get("role") != "educator":
+        return redirect("/")
     return render_template("educator.html", courses=courses)
 
+
+# -------------------------
+# ADD COURSE
+# -------------------------
 @app.route("/add_course", methods=["POST"])
 def add_course():
+    if session.get("role") != "educator":
+        return redirect("/")
+
     title = request.form["title"]
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO courses (title) VALUES (?)", title)
-    conn.commit()
+    courses.append(title)
     return redirect("/educator")
 
+
+# -------------------------
+# DELETE COURSE
+# -------------------------
+@app.route("/delete_course/<int:index>")
+def delete_course(index):
+    if session.get("role") != "educator":
+        return redirect("/")
+
+    if index < len(courses):
+        courses.pop(index)
+    return redirect("/educator")
+
+
+# -------------------------
+# LEARNER PAGE
+# -------------------------
 @app.route("/learner")
 def learner():
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM courses")
-    courses = cursor.fetchall()
+    if session.get("role") != "learner":
+        return redirect("/")
     return render_template("learner.html", courses=courses)
-
-if __name__ == "__main__":
-    app.run(debug=True)
