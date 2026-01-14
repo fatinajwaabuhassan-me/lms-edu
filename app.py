@@ -28,6 +28,10 @@ def educator():
         return redirect("/")
     return render_template("educator.html", courses=courses)
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 # ---------------- ADD COURSE ----------------
 @app.route("/add_course", methods=["POST"])
